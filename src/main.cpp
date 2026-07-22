@@ -1,4 +1,5 @@
 #include "crow.h"
+#include "database.h"
 
 signed main() {
     crow::SimpleApp app;

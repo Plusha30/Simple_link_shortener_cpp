@@ -6,9 +6,12 @@ endif()
 
 project(Simple_link_shortener VERSION 1.0.0)
 
-add_executable(main src/main.cpp)
-
 find_package(Crow CONFIG REQUIRED)
 find_package(unofficial-sqlite3 CONFIG REQUIRED)
-target_link_libraries(main PRIVATE Crow::Crow)
-target_link_libraries(main PRIVATE unofficial::sqlite3::sqlite3)
+
+add_library(database STATIC src/database.cpp)
+target_include_directories(database PUBLIC include)
+target_link_libraries(database PRIVATE unofficial::sqlite3::sqlite3)
+
+add_executable(main src/main.cpp)
+target_link_libraries(main PRIVATE database Crow::Crow)
