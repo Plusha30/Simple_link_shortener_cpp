@@ -1,3 +1,30 @@
 #pragma once
+#include "sqlite3.h"
+#include <string>
+#include <variant>
+#include <vector>
 
-void test(int a);
+struct sqlite3;
+struct sqlite3_stmt;
+
+namespace SQL_Module {
+    using SQL_Value = std::variant<std::nullptr_t, int64_t, double, std::string>;
+    
+    template<class... Ts> struct overloaded : Ts... { using Ts::operator()...; };
+    template<class... Ts> overloaded(Ts...) -> overloaded<Ts...>;
+
+    class SQL_Result {
+    public:
+        bool success = true;
+        std::vector<std::vector<SQL_Value>> rows = {};
+
+        SQL_Result(bool _success, std::vector<std::vector<SQL_Value>> _rows);
+        SQL_Result(bool _success);
+        SQL_Result();
+    };
+
+    class SQL_Interface {
+    public:
+        SQL_Result exec_stmt(const std::string& query, const std::vector<SQL_Value>& params);
+    };
+}
