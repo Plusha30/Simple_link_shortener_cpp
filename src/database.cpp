@@ -38,7 +38,7 @@ namespace SQL_Module {
                 }
             }, params[i]);
         }
-        SQL_Result res;
+        SQL_Result res = SQL_Result(true);
         while ((resultcode = sqlite3_step(stmt)) == SQLITE_ROW) {
             int columnCount = sqlite3_column_count(stmt);
             std::vector<SQL_Value> row;
