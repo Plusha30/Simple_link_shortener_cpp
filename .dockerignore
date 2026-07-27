@@ -1,0 +1,5 @@
+build/
+.git/
+.vscode/
+vcpkg_installed
+*.o
