@@ -17,7 +17,8 @@ namespace SQL_Module {
         int resultcode = sqlite3_open("../database.db", &db);
         if (resultcode != SQLITE_OK)
             return SQL_Result();
-        if (sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        resultcode = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
+        if (resultcode != SQLITE_OK) {
             return SQL_Result();
         }
         for (u_int32_t i = 0; i < params.size(); i++) {
