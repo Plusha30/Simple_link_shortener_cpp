@@ -14,10 +14,11 @@ namespace SQL_Module {
     SQL_Result SQL_Interface::exec_stmt(const std::string& query, const std::vector<SQL_Value>& params) {
         sqlite3* db;
         sqlite3_stmt* stmt = nullptr;
-        int resultcode = sqlite3_open("../database.db", &db);
+        int resultcode = sqlite3_open("database.db", &db);
         if (resultcode != SQLITE_OK)
             return SQL_Result();
-        if (sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr) != SQLITE_OK) {
+        resultcode = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
+        if (resultcode != SQLITE_OK) {
             return SQL_Result();
         }
         for (u_int32_t i = 0; i < params.size(); i++) {

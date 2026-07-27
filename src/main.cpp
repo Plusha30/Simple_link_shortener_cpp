@@ -26,7 +26,7 @@ signed main() {
             res.end();
             return;
         }
-        cpr::Response r = cpr::Get(cpr::Url(url));
+        cpr::Response r = cpr::Get(cpr::Url(url), cpr::ConnectTimeout{3000});
         if (r.error) {
             res.code = 400;
             res.write("URL_INVALID");
@@ -34,7 +34,7 @@ signed main() {
             return;
         }
         SQL_Module::SQL_Result sql_res = SQL_Module::SQL_Interface().exec_stmt(std::string(
-            "INSERT INTO urls (url) VALUES ? RETURNING id;"
+            "INSERT INTO urls (url) VALUES (?) RETURNING id;"
         ), {url});
         if (sql_res.success == false) {
             res.code = 500;
@@ -44,6 +44,26 @@ signed main() {
         }
         res.code = 201;
         res.write(std::to_string(std::get<int64_t>(sql_res.rows[0][0])));
+        res.end();
+        return;
+    });
+    CROW_ROUTE(app, "/<int>")([](const crow::request& req, crow::response& res, int64_t id){
+        SQL_Module::SQL_Result sql_res = SQL_Module::SQL_Interface().exec_stmt(std::string(
+            "SELECT url FROM urls WHERE id = ?"), {id});
+        if (sql_res.success == false) {
+            res.code = 500;
+            res.write("INTERNAL_ERROR");
+            res.end();
+            return;
+        }
+        if (sql_res.rows.size() == 0) {
+            res.code = 404;
+            res.write("URL_NOT_FOUND");
+            res.end();
+            return;
+        }
+        res.code = 301;
+        res.redirect(std::get<std::string>(sql_res.rows[0][0]));
         res.end();
         return;
     });
