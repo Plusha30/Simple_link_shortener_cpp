@@ -2,6 +2,7 @@
     "dependencies": [
         "crow",
         "sqlite3",
-        "cpr"
+        "cpr",
+        "spdlog"
     ]
 }

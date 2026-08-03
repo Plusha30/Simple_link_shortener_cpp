@@ -8,3 +8,5 @@ services:
     restart: unless-stopped
     environment:
       - APP_ENV=production
+    volumes:
+      - ./logs:/app/logs

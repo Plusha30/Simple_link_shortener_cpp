@@ -6,20 +6,20 @@
 
 namespace SQL_Module {
 
-    SQL_Result::SQL_Result() : success(false), rows({}) {}
-    SQL_Result::SQL_Result(bool _success) : success(_success), rows({}) {}
+    SQL_Result::SQL_Result(bool _success) : success(_success), err(""), rows({}) {}
+    SQL_Result::SQL_Result(bool _success, std::string _err) : success(_success), err(_err), rows({}) {}
     SQL_Result::SQL_Result(bool _success, std::vector<std::vector<SQL_Value>> _rows)
-        : success(_success), rows(std::move(_rows)) {}
+        : success(_success), err(""), rows(std::move(_rows)) {}
 
     SQL_Result SQL_Interface::exec_stmt(const std::string& query, const std::vector<SQL_Value>& params) {
         sqlite3* db;
         sqlite3_stmt* stmt = nullptr;
         int resultcode = sqlite3_open("database.db", &db);
         if (resultcode != SQLITE_OK)
-            return SQL_Result();
+            return SQL_Result(false, "FAILED_OPEN_DB");
         resultcode = sqlite3_prepare_v2(db, query.c_str(), -1, &stmt, nullptr);
         if (resultcode != SQLITE_OK) {
-            return SQL_Result();
+            return SQL_Result(false, "INVALID_STMT");
         }
         for (u_int32_t i = 0; i < params.size(); i++) {
             int idx = static_cast<int>(i) + 1;
@@ -67,7 +67,7 @@ namespace SQL_Module {
             res.rows.push_back(row);
         }
         if (resultcode != SQLITE_DONE) {
-            return SQL_Result();
+            return SQL_Result(false, "FAILED_PROCESS");
         }
         sqlite3_finalize(stmt);
         sqlite3_close(db);

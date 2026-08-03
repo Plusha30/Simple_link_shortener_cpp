@@ -16,11 +16,12 @@ namespace SQL_Module {
     class SQL_Result {
     public:
         bool success = true;
+        std::string err;
         std::vector<std::vector<SQL_Value>> rows = {};
 
         SQL_Result(bool _success, std::vector<std::vector<SQL_Value>> _rows);
+        SQL_Result(bool _success, std::string err);
         SQL_Result(bool _success);
-        SQL_Result();
     };
 
     class SQL_Interface {
