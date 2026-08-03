@@ -3,6 +3,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <mutex>
 
 namespace SQL_Module {
 
@@ -12,6 +13,7 @@ namespace SQL_Module {
         : success(_success), err(""), rows(std::move(_rows)) {}
 
     SQL_Result SQL_Interface::exec_stmt(const std::string& query, const std::vector<SQL_Value>& params) {
+        std::lock_guard<std::mutex> lock(db_mutex);
         sqlite3* db;
         sqlite3_stmt* stmt = nullptr;
         int resultcode = sqlite3_open("database.db", &db);

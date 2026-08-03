@@ -3,6 +3,7 @@
 #include <string>
 #include <variant>
 #include <vector>
+#include <mutex>
 
 struct sqlite3;
 struct sqlite3_stmt;
@@ -27,5 +28,7 @@ namespace SQL_Module {
     class SQL_Interface {
     public:
         SQL_Result exec_stmt(const std::string& query, const std::vector<SQL_Value>& params);
+    private:
+        std::mutex db_mutex;
     };
 }
